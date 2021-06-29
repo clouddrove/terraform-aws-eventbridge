@@ -24,6 +24,7 @@ module "labels" {
   name        = var.name
   environment = var.environment
   label_order = var.label_order
+  repository  = var.repository
 }
 
 resource "aws_cloudwatch_event_bus" "this" {
@@ -47,7 +48,7 @@ resource "aws_cloudwatch_event_rule" "this" {
   is_enabled          = lookup(each.value, "enabled", true)
   event_pattern       = lookup(each.value, "event_pattern", null)
   schedule_expression = lookup(each.value, "schedule_expression", null)
-  role_arn            = lookup(each.value, "role_arn" , null )
+  role_arn            = lookup(each.value, "role_arn", null)
 
   tags = merge(var.tags, {
     Name = each.value.Name
@@ -64,7 +65,7 @@ resource "aws_cloudwatch_event_target" "this" {
   rule = each.value.Name
   arn  = each.value.arn
 
-  role_arn   = lookup(each.value, "role_arn", null) 
+  role_arn   = lookup(each.value, "role_arn", null)
   target_id  = lookup(each.value, "target_id", null)
   input      = lookup(each.value, "input", null)
   input_path = lookup(each.value, "input_path", null)
