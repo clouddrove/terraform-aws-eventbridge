@@ -17,6 +17,10 @@ locals {
   ])
 }
 
+#Module      : labels
+#Description : This terraform module is designed to generate consistent label names and tags
+#              for resources. You can use terraform-labels to implement a strict naming
+#              convention.
 module "labels" {
   source  = "clouddrove/labels/aws"
   version = "0.15.0"
@@ -24,15 +28,20 @@ module "labels" {
   name        = var.name
   environment = var.environment
   label_order = var.label_order
+  repository  = var.repository
 }
 
+#Module      : Event Bus
+#Description : Provides an EventBridge event bus resource.
 resource "aws_cloudwatch_event_bus" "this" {
   count = var.create && var.create_bus ? 1 : 0
 
-  name = var.bus_name
-  tags = var.tags
+  name = module.labels.id
+  tags = module.labels.tags
 }
 
+#Module      : Event Rule
+#Description : Provides an EventBridge Rule resource.
 resource "aws_cloudwatch_event_rule" "this" {
   for_each = var.create && var.create_rules ? {
     for rule in local.eventbridge_rules : rule.name => rule
@@ -47,13 +56,15 @@ resource "aws_cloudwatch_event_rule" "this" {
   is_enabled          = lookup(each.value, "enabled", true)
   event_pattern       = lookup(each.value, "event_pattern", null)
   schedule_expression = lookup(each.value, "schedule_expression", null)
-  role_arn            = lookup(each.value, "role_arn" , null )
+  role_arn            = lookup(each.value, "role_arn", null)
 
-  tags = merge(var.tags, {
+  tags = merge(module.labels.tags, {
     Name = each.value.Name
   })
 }
 
+#Module      : Event Rule
+#Description : Provides an EventBridge Target resource.
 resource "aws_cloudwatch_event_target" "this" {
   for_each = var.create && var.create_targets ? {
     for target in local.eventbridge_targets : target.name => target
@@ -64,7 +75,7 @@ resource "aws_cloudwatch_event_target" "this" {
   rule = each.value.Name
   arn  = each.value.arn
 
-  role_arn   = lookup(each.value, "role_arn", null) 
+  role_arn   = lookup(each.value, "role_arn", null)
   target_id  = lookup(each.value, "target_id", null)
   input      = lookup(each.value, "input", null)
   input_path = lookup(each.value, "input_path", null)
@@ -176,6 +187,8 @@ resource "aws_cloudwatch_event_target" "this" {
   depends_on = [aws_cloudwatch_event_rule.this]
 }
 
+#Module      : Event Rule
+#Description : Provides an EventBridge event archive resource.
 resource "aws_cloudwatch_event_archive" "this" {
   for_each = var.create && var.create_archives ? var.archives : {}
 
@@ -187,6 +200,8 @@ resource "aws_cloudwatch_event_archive" "this" {
   retention_days = lookup(each.value, "retention_days", null)
 }
 
+#Module      : Event Rule
+#Description : Provides a resource to create an EventBridge permission to support cross-account events in the current account default event bus.
 resource "aws_cloudwatch_event_permission" "this" {
   for_each = var.create && var.create_permissions ? var.permissions : {}
 

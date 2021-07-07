@@ -1,8 +1,6 @@
 # EventBridge Bus
-output "eventbridge_bus_name" {
-  description = "The EventBridge Bus Name"
-  value       = var.bus_name
-}
+# EventBridge Bus
+
 
 output "eventbridge_bus_arn" {
   description = "The EventBridge Bus Arn"
@@ -28,4 +26,9 @@ output "eventbridge_rule_arns" {
   value = {
     for p in sort(keys(var.rules)) : p => aws_cloudwatch_event_rule.this[p].arn
   }
+}
+
+output "tags" {
+  value       = module.labels.tags
+  description = "A mapping of tags to assign to the resource."
 }

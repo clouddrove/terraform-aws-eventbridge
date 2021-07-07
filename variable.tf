@@ -41,13 +41,6 @@ variable "create_archives" {
 }
 
 #######################
-
-variable "bus_name" {
-  description = "A unique name for your EventBridge Bus"
-  type        = string
-  default     = "default"
-}
-
 variable "rules" {
   description = "A map of objects with EventBridge Rule definitions."
   type        = map(any)
@@ -97,4 +90,17 @@ variable "label_order" {
   type        = list(any)
   default     = []
   description = "Label order, e.g. `name`,`application`."
+}
+
+
+variable "repository" {
+  type        = string
+  default     = "https://github.com/clouddrove/terraform-aws-eventbridge"
+  description = "Terraform current module repo"
+
+  validation {
+    # regex(...) fails if it cannot find a match
+    condition     = can(regex("^https://", var.repository))
+    error_message = "The module-repo value must be a valid Git repo link."
+  }
 }

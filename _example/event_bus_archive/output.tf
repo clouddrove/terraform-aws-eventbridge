@@ -12,3 +12,8 @@ output "eventbridge_rule_arns" {
   description = "The EventBridge Rule ARNs"
   value       = module.eventbridge_archive.eventbridge_rule_arns
 }
+
+output "tags" {
+  value       = module.eventbridge_archive.tags
+  description = "A mapping of tags to assign to the resource."
+}

@@ -7,3 +7,7 @@
 _example/.terraform.tfstate.lock.info
 *.terrafrom.lock.hcl
 .terraform.lock.hcl
+/_test/event_bus_archive/go.mod
+/_test/event_bus_archive/go.sum
+/_test/event_rule_target/go.sum
+/_test/event_rule_target/go.sum

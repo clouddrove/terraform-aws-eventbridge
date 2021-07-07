@@ -23,20 +23,6 @@ data "aws_iam_policy_document" "default" {
   }
 }
 
-# data "aws_iam_policy_document" "iam-policy" {
-#   statement {
-#     actions = [
-#       "ssm:UpdateInstanceInformation",
-#       "ssmmessages:CreateControlChannel",
-#       "ssmmessages:CreateDataChannel",
-#       "ssmmessages:OpenControlChannel",
-#     "ssmmessages:OpenDataChannel"]
-#     effect    = "Allow"
-#     resources = ["*"]
-#   }
-# }
-
-
 data "aws_iam_policy_document" "iam-policy" {
   statement {
     sid     = "eventspolicy"
