@@ -14,7 +14,7 @@ func Test(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
 		// Source path of Terraform directory.
-		TerraformDir: "../_example",
+		TerraformDir: "../../_example/event_bus_archive",
 		Upgrade: true,
 	}
 
@@ -25,8 +25,8 @@ func Test(t *testing.T) {
 	defer terraform.Destroy(t, terraformOptions)
 
 	// To get the value of an output variable, run 'terraform output'
-	name := terraform.OutputList(t, terraformOptions, "name")
+    Tags := terraform.OutputMap(t, terraformOptions, "tags")
 
 	// Check that we get back the outputs that we expect
-	assert.Equal(t, "key-test", name[0])
+	assert.Equal(t, "bus-test", Tags["Name"])
 }

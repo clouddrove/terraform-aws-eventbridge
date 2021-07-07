@@ -14,7 +14,7 @@ func Test(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
 		// Source path of Terraform directory.
-		TerraformDir: "../../_example/event_bus_archive",
+		TerraformDir: "../../_example/event_rule_target",
 		Upgrade: true,
 	}
 
@@ -28,5 +28,5 @@ func Test(t *testing.T) {
     Tags := terraform.OutputMap(t, terraformOptions, "tags")
 
 	// Check that we get back the outputs that we expect
-	assert.Equal(t, "bus-test", Tags["Name"])
+	assert.Equal(t, "eventbridge-test", Tags["Name"])
 }

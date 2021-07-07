@@ -41,13 +41,6 @@ variable "create_archives" {
 }
 
 #######################
-
-variable "bus_name" {
-  description = "A unique name for your EventBridge Bus"
-  type        = string
-  default     = "default"
-}
-
 variable "rules" {
   description = "A map of objects with EventBridge Rule definitions."
   type        = map(any)

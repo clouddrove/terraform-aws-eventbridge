@@ -44,7 +44,9 @@ usage: |-
         create_bus      = true
         create_archives = true
 
-        bus_name = "clouddrove-bus"
+        name        = "bus"
+        environment = "test"
+        label_order = ["name", "environment"]
 
 
         archives = {
@@ -71,7 +73,6 @@ usage: |-
         environment = "test"
         label_order = ["name", "environment"]
 
-        bus_name = "test"
         rules = {
         orders = {
         description   = "Capture all order data"
