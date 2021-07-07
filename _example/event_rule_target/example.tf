@@ -2,11 +2,9 @@ provider "aws" {
   region = "eu-west-1"
 }
 
-
 resource "random_pet" "this" {
   length = 2
 }
-
 
 resource "aws_sqs_queue" "queue" {
   name = "${random_pet.this.id}-queue"
@@ -18,11 +16,10 @@ resource "aws_sqs_queue" "dlq" {
 module "eventbridge" {
   source = "../../"
 
-  name        = "subnets"
+  name        = "eventbridge"
   environment = "test"
   label_order = ["name", "environment"]
 
-  bus_name = "test"
   rules = {
     orders = {
       description   = "Capture all order data"

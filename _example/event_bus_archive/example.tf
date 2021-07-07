@@ -8,7 +8,9 @@ module "eventbridge_archive" {
   create_bus      = true
   create_archives = true
 
-  bus_name = "clouddrove-bus"
+  name        = "bus"
+  environment = "test"
+  label_order = ["name", "environment"]
 
 
   archives = {
