@@ -5,10 +5,11 @@ provider "aws" {
 resource "random_pet" "this" {
   length = 2
 }
-
+#tfsec:ignore:aws-sqs-enable-queue-encryption
 resource "aws_sqs_queue" "queue" {
   name = "${random_pet.this.id}-queue"
 }
+#tfsec:ignore:aws-sqs-enable-queue-encryption
 resource "aws_sqs_queue" "dlq" {
   name = "${random_pet.this.id}-dlq"
 }
