@@ -1,3 +1,5 @@
+#tfsec:ignore:aws-sqs-enable-queue-encryption
+#tfsec:ignore:aws-sqs-enable-queue-encryption
 locals {
   eventbridge_rules = flatten([
     for index, rule in var.rules :
