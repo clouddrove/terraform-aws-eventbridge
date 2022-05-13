@@ -23,7 +23,7 @@ jobs:
 
       - name: 'Terratest for event_bus_archive'
         if: ${{ github.event.label.name == 'terratest' }}
-        uses: 'clouddrove/github-actions@v9.0.1'
+        uses: 'clouddrove/github-actions@v9.0.2'
         with:
           actions_subcommand: 'terratest'
           tf_actions_working_dir: '_test/event_bus_archive'
@@ -32,7 +32,7 @@ jobs:
 
       - name: 'Terratest for event_rule_target'
         if: ${{ github.event.label.name == 'terratest' }}
-        uses: 'clouddrove/github-actions@v9.0.1'
+        uses: 'clouddrove/github-actions@v9.0.2'
         with:
           actions_subcommand: 'terratest'
           tf_actions_working_dir: '_test/event_rule_target'
