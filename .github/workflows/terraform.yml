@@ -19,7 +19,6 @@ jobs:
       minVersion: ${{ steps.minMax.outputs.minVersion }}
       maxVersion: ${{ steps.minMax.outputs.maxVersion }}
 
-
   versionEvaluate:
     name: Evaluate Terraform versions
     runs-on: ubuntu-latest
@@ -54,11 +53,11 @@ jobs:
           cd ${{ matrix.directory }}
           terraform init
           terraform validate
-         
 
       - name: tflint
         uses: reviewdog/action-tflint@master
         with:
+          tflint_version: v0.29.0
           github_token: ${{ secrets.GITHUB }}
           working_directory: ${{ matrix.directory }}
           fail_on_error: 'true'
