@@ -8,5 +8,5 @@ jobs:
     secrets:
       GITHUB: ${{ secrets.GITHUB }}
     with:
-      tfcheck: 'event_rule_target / Get min/max versions'
+      tfcheck: 'event_bus_archive / Check code format'
 ...
