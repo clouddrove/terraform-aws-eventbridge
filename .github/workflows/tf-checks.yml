@@ -8,8 +8,8 @@ jobs:
   event_bus_archive:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@1.0.9
     with:
-      working_directory: './_example/event_bus_archive/'
+      working_directory: './examples/event_bus_archive/'
   event_rule_target:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@1.0.9
     with:
-      working_directory: './_example/event_rule_target/'
+      working_directory: './examples/event_rule_target/'
