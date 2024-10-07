@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 jobs:
   event_bus_archive:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master 
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
     with:
       working_directory: './examples/event_bus_archive/'
   event_rule_target:
