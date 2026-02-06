@@ -4,6 +4,12 @@ variable "create" {
   default     = true
 }
 
+variable "extra_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Additional tags (e.g. map(`BusinessUnit`,`XYZ`)."
+}
+
 variable "create_role" {
   description = "Controls whether IAM role for Lambda Function should be created"
   type        = bool
