@@ -29,6 +29,7 @@ module "labels" {
   environment = var.environment
   label_order = var.label_order
   repository  = var.repository
+  extra_tags  = var.tags
 }
 
 #Module      : Event Bus

@@ -1,15 +1,20 @@
 name: tf-checks
+permissions:
+  id-token: write
 on:
-  push:
-    branches: [ master ]
   pull_request:
-  workflow_dispatch:
 jobs:
   event_bus_archive:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master 
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@v2 
     with:
       working_directory: './examples/event_bus_archive/'
+      provider: aws
+    secrets: 
+      BUILD_ROLE: ${{ secrets.BUILD_ROLE }}
   event_rule_target:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@v2
     with:
       working_directory: './examples/event_rule_target/'
+      provider: aws
+    secrets: 
+      BUILD_ROLE: ${{ secrets.BUILD_ROLE }}
