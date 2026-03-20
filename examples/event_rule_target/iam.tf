@@ -1,6 +1,6 @@
 module "iam-role" {
   source  = "clouddrove/iam-role/aws"
-  version = "1.3.1"
+  version = "1.3.2"
 
   name               = "iam-role"
   environment        = "eventbridge"
