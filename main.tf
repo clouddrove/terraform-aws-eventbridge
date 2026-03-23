@@ -23,7 +23,7 @@ locals {
 #              convention.
 module "labels" {
   source  = "clouddrove/labels/aws"
-  version = "1.3.0"
+  version = "1.3.1"
 
   name        = var.name
   environment = var.environment
