@@ -29,6 +29,7 @@ module "labels" {
   environment = var.environment
   label_order = var.label_order
   repository  = var.repository
+  extra_tags  = var.tags
 }
 
 #Module      : Event Bus
@@ -100,6 +101,7 @@ resource "aws_cloudwatch_event_target" "this" {
       platform_version    = lookup(ecs_target.value, "platform_version", null)
       task_count          = lookup(ecs_target.value, "task_count", null)
       task_definition_arn = lookup(ecs_target.value, "task_definition_arn", null)
+      tags                = module.labels.tags
 
       dynamic "network_configuration" {
         for_each = lookup(each.value.ecs_target, "network_configuration", null) != null ? [
