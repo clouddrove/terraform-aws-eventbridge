@@ -28,3 +28,4 @@
 | eventbridge\_rule\_arns | The EventBridge Rule ARNs created |
 | eventbridge\_rule\_ids | The EventBridge Rule IDs created |
 | tags | A mapping of tags to assign to the resource. |
+
