@@ -11,6 +11,7 @@
 | create\_rules | Controls whether EventBridge Rule resources should be created | `bool` | `true` | no |
 | create\_targets | Controls whether EventBridge Target resources should be created | `bool` | `true` | no |
 | environment | Environment (e.g. `prod`, `dev`, `staging`). | `string` | `""` | no |
+| extra\_tags | Additional tags (e.g. map(`BusinessUnit`,`XYZ`). | `map(string)` | `{}` | no |
 | label\_order | Label order, e.g. `name`,`application`. | `list(any)` | `[]` | no |
 | name | Name  (e.g. `app` or `cluster`). | `string` | `""` | no |
 | permissions | A map of objects with EventBridge Permission definitions. | `map(any)` | `{}` | no |
