@@ -13,22 +13,28 @@ output "eventbridge_archive_arns" {
   value       = { for v in aws_cloudwatch_event_archive.this : v.name => v.arn }
 }
 
+output "eventbridge_global_endpoint_arns" {
+  description = "The EventBridge Global Endpoint ARNs created"
+  value       = { for name, endpoint in aws_cloudwatch_event_endpoint.this : name => endpoint.arn }
+}
+
+output "eventbridge_global_endpoint_urls" {
+  description = "The EventBridge Global Endpoint URLs created"
+  value       = { for name, endpoint in aws_cloudwatch_event_endpoint.this : name => endpoint.endpoint_url }
+}
+
 # EventBridge Rule
 output "eventbridge_rule_ids" {
   description = "The EventBridge Rule IDs created"
-  value = {
-    for p in sort(keys(var.rules)) : p => aws_cloudwatch_event_rule.this[p].id
-  }
+  value       = { for name, rule in aws_cloudwatch_event_rule.this : name => rule.id }
 }
 
 output "eventbridge_rule_arns" {
   description = "The EventBridge Rule ARNs created"
-  value = {
-    for p in sort(keys(var.rules)) : p => aws_cloudwatch_event_rule.this[p].arn
-  }
+  value       = { for name, rule in aws_cloudwatch_event_rule.this : name => rule.arn }
 }
 
 output "tags" {
-  value       = module.labels.tags
+  value       = local.tags
   description = "A mapping of tags to assign to the resource."
 }

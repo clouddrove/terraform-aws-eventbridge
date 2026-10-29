@@ -46,6 +46,51 @@ variable "create_archives" {
   default     = false
 }
 
+variable "create_endpoints" {
+  description = "Controls whether EventBridge Global Endpoint resources should be created"
+  type        = bool
+  default     = false
+}
+
+variable "bus_name" {
+  description = "Optional event bus name. Partner event buses must use their partner event source name. When creating a bus, defaults to the generated label; otherwise defaults to the default bus."
+  type        = string
+  default     = null
+}
+
+variable "bus_description" {
+  description = "Description for the event bus created by this module."
+  type        = string
+  default     = null
+}
+
+variable "event_source_name" {
+  description = "Partner event source name to associate with the event bus. It must match bus_name."
+  type        = string
+  default     = null
+}
+
+variable "kms_key_identifier" {
+  description = "Customer managed KMS key identifier for encrypting events on the event bus."
+  type        = string
+  default     = null
+}
+
+variable "bus_dead_letter_arn" {
+  description = "ARN of an SQS queue used as the event bus dead-letter queue."
+  type        = string
+  default     = null
+}
+
+variable "bus_log_config" {
+  description = "Optional event bus logging configuration. level accepts OFF, ERROR, INFO, or TRACE; include_detail accepts NONE or FULL. Requires AWS provider 6.6.0 or later."
+  type = object({
+    level          = optional(string)
+    include_detail = optional(string)
+  })
+  default = null
+}
+
 #######################
 variable "rules" {
   description = "A map of objects with EventBridge Rule definitions."
@@ -63,6 +108,24 @@ variable "archives" {
   description = "A map of objects with the EventBridge Archive definitions."
   type        = map(any)
   default     = {}
+}
+
+variable "endpoints" {
+  description = "Global endpoint definitions. Each endpoint requires exactly two event bus ARNs, a primary Route 53 health check ARN, and a secondary Region."
+  type = map(object({
+    event_bus_arns           = list(string)
+    primary_health_check_arn = string
+    secondary_region         = string
+    description              = optional(string)
+    role_arn                 = optional(string)
+    replication_state        = optional(string)
+  }))
+  default = {}
+
+  validation {
+    condition     = alltrue([for endpoint in values(var.endpoints) : length(endpoint.event_bus_arns) == 2])
+    error_message = "Each global endpoint must specify exactly two event_bus_arns."
+  }
 }
 
 variable "permissions" {

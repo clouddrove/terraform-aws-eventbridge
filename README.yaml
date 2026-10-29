@@ -32,12 +32,12 @@ badges:
 prerequesties:
   - name: Terraform
     url: https://learn.hashicorp.com/terraform/getting-started/install.html
-    version: ">= 1.6.6"
+    version: ">= 1.10.0"
 
 providers:
   - name: aws
     url: https://aws.amazon.com/
-    version: ">= 5.31.0"
+    version: ">= 6.6.0"
 
 module_dependencies:
   - name: Labels Module
@@ -125,4 +125,39 @@ usage: |-
           ]
         }
       }
+  ```
+
+  ### event_bus_logging_and_encryption
+  Event buses can use a customer managed KMS key and send processing logs to a configured destination. The log destination policy and destination resource must be managed separately.
+  ```hcl
+  module "eventbridge" {
+    source = "clouddrove/eventbridge/aws"
+
+    name               = "orders"
+    environment        = "prod"
+    kms_key_identifier = aws_kms_key.eventbridge.arn
+    bus_log_config = {
+      level          = "INFO"
+      include_detail = "FULL"
+    }
+  }
+  ```
+
+  ### eventbridge_global_endpoint
+  Global endpoints provide regional failover for custom events. Create matching event buses in both Regions and a Route 53 health check, then pass their ARNs to the endpoint configuration.
+  ```hcl
+  module "eventbridge" {
+    source = "clouddrove/eventbridge/aws"
+
+    create_endpoints = true
+    endpoints = {
+      orders = {
+        event_bus_arns           = [aws_cloudwatch_event_bus.primary.arn, aws_cloudwatch_event_bus.secondary.arn]
+        primary_health_check_arn = aws_route53_health_check.primary.arn
+        secondary_region         = "us-west-2"
+        role_arn                 = aws_iam_role.replication.arn
+        replication_state        = "ENABLED"
+      }
+    }
+  }
   ```
