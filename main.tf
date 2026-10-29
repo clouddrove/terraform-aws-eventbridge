@@ -1,4 +1,6 @@
 locals {
+  event_bus_name = var.create_bus ? coalesce(var.bus_name, module.labels.id) : coalesce(var.bus_name, "default")
+  tags           = merge(module.labels.tags, var.tags)
   eventbridge_rules = flatten([
     for index, rule in var.rules :
     merge(rule, {
@@ -37,8 +39,26 @@ module "labels" {
 resource "aws_cloudwatch_event_bus" "this" {
   count = var.create && var.create_bus ? 1 : 0
 
-  name = module.labels.id
-  tags = module.labels.tags
+  name               = local.event_bus_name
+  description        = var.bus_description
+  event_source_name  = var.event_source_name
+  kms_key_identifier = var.kms_key_identifier
+  tags               = local.tags
+
+  dynamic "dead_letter_config" {
+    for_each = var.bus_dead_letter_arn != null ? [var.bus_dead_letter_arn] : []
+    content {
+      arn = dead_letter_config.value
+    }
+  }
+
+  dynamic "log_config" {
+    for_each = var.bus_log_config != null ? [var.bus_log_config] : []
+    content {
+      include_detail = lookup(log_config.value, "include_detail", null)
+      level          = lookup(log_config.value, "level", null)
+    }
+  }
 }
 
 #Module      : Event Rule
@@ -51,15 +71,16 @@ resource "aws_cloudwatch_event_rule" "this" {
   name        = each.value.Name
   name_prefix = lookup(each.value, "name_prefix", null)
 
-  event_bus_name = var.create_bus ? aws_cloudwatch_event_bus.this[0].name : "default"
+  event_bus_name = local.event_bus_name
 
   description         = lookup(each.value, "description", null)
-  is_enabled          = lookup(each.value, "enabled", true)
+  is_enabled          = lookup(each.value, "state", null) == null ? lookup(each.value, "enabled", true) : null
+  state               = lookup(each.value, "state", null)
   event_pattern       = lookup(each.value, "event_pattern", null)
   schedule_expression = lookup(each.value, "schedule_expression", null)
   role_arn            = lookup(each.value, "role_arn", null)
 
-  tags = merge(module.labels.tags, {
+  tags = merge(local.tags, {
     Name = each.value.Name
   })
 }
@@ -71,7 +92,7 @@ resource "aws_cloudwatch_event_target" "this" {
     for target in local.eventbridge_targets : target.name => target
   } : {}
 
-  event_bus_name = var.create_bus ? aws_cloudwatch_event_bus.this[0].name : "default"
+  event_bus_name = local.event_bus_name
 
   rule = each.value.Name
   arn  = each.value.arn
@@ -210,5 +231,43 @@ resource "aws_cloudwatch_event_permission" "this" {
   statement_id = compact(split(" ", each.key))[1]
 
   action         = lookup(each.value, "action", null)
-  event_bus_name = try(each.value["event_bus_name"], aws_cloudwatch_event_bus.this[0].name, null)
+  event_bus_name = try(each.value["event_bus_name"], local.event_bus_name)
+}
+
+# Module      : EventBridge Global Endpoint
+# Description : Provides regional failover for custom events sent to paired event buses.
+resource "aws_cloudwatch_event_endpoint" "this" {
+  for_each = var.create && var.create_endpoints ? var.endpoints : {}
+
+  name        = each.key
+  description = lookup(each.value, "description", null)
+  role_arn    = lookup(each.value, "role_arn", null)
+
+  dynamic "event_bus" {
+    for_each = each.value.event_bus_arns
+    content {
+      event_bus_arn = event_bus.value
+    }
+  }
+
+  dynamic "replication_config" {
+    for_each = [coalesce(
+      each.value.replication_state,
+      each.value.role_arn == null ? "DISABLED" : "ENABLED"
+    )]
+    content {
+      state = replication_config.value
+    }
+  }
+
+  routing_config {
+    failover_config {
+      primary {
+        health_check = each.value.primary_health_check_arn
+      }
+      secondary {
+        route = each.value.secondary_region
+      }
+    }
+  }
 }
